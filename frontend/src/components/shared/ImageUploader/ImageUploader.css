@@ -243,8 +243,9 @@ table {
 
 .DescrField{
   margin-bottom: 10px;
-  width:75%;
+  width:750px;
   resize: none;
+  margin-right: 50px;
   
 }
 
