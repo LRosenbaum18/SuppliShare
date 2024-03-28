@@ -254,3 +254,9 @@ table {
   margin-top: -20px; /* Adjust the overlap distance as needed */
   box-shadow: 0 4px 15px black;
 }
+input[type=text], select {
+  border: 1px solid black;
+  width: 50%;
+  padding: 14px 20px;
+
+}

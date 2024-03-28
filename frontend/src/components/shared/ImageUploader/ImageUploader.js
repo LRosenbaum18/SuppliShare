@@ -21,23 +21,23 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
 
         const formData = new FormData();
         formData.append('title', title);
-		console.log("titleform data after apend:", title);
+        console.log("titleform data after apend:", title);
         formData.append('description', description);
-		formData.append('zip', zip);
-		formData.append('itemcategory', itemcategory);
-		console.log("descform data after apend:", description);
-		console.log("zipform data after apend:", zip);
-		console.log("itemcategform data after apend:", itemcategory);
-		console.log("FormData after apending desc and title and zip", formData);
+        formData.append('zip', zip);
+        formData.append('itemcategory', itemcategory);
+        console.log("descform data after apend:", description);
+        console.log("zipform data after apend:", zip);
+        console.log("itemcategform data after apend:", itemcategory);
+        console.log("FormData after apending desc and title and zip", formData);
 
         console.log('Uploaded Files:', uploadedFiles);
 
 
-// Iterate over the imageUrls array and append each URL to the FormData object
-uploadedFiles.forEach(file => {
-  formData.append('image', file); // Append each file with the key 'image'
-});
-		console.log("FormData after apending img", formData);
+        // Iterate over the imageUrls array and append each URL to the FormData object
+        uploadedFiles.forEach(file => {
+          formData.append('image', file); // Append each file with the key 'image'
+        });
+        console.log("FormData after apending img", formData);
 
         const response = await fetch('http://localhost:5000/uploadimage', {
           method: 'POST',
@@ -61,24 +61,24 @@ uploadedFiles.forEach(file => {
             onTextSubmit(title, description, data.uploadedData.urls, zip, itemcategory);
           }
 
-        setUploadedImages((prevImages) => [
-          ...prevImages,
-          {
-            name: 'Image',
-            dataURL: data.uploadedData.urls[0],
-          },
-        ]);
-		console.log('Image URL:', data.uploadedData.urls[0]);
+          setUploadedImages((prevImages) => [
+            ...prevImages,
+            {
+              name: 'Image',
+              dataURL: data.uploadedData.urls[0],
+            },
+          ]);
+          console.log('Image URL:', data.uploadedData.urls[0]);
 
-        if (onUpload) {
+          if (onUpload) {
             onUpload(uploadedFiles);
           }
 
           // Log title, description, and URL
           console.log('Title:', title);
           console.log('Description:', description);
-		  console.log('zipcode:', zip);
-		  console.log('itemcategory:', itemcategory);
+          console.log('zipcode:', zip);
+          console.log('itemcategory:', itemcategory);
           console.log('Image URL:', data.uploadedData.urls[0]);
         } else {
           console.error('Invalid response from server:', data);
@@ -87,7 +87,7 @@ uploadedFiles.forEach(file => {
         console.error('Error:', error);
       }
     },
-    [onUpload, title, description,  zip, itemcategory, onTextSubmit]
+    [onUpload, title, description, zip, itemcategory, onTextSubmit]
   );
   useEffect(() => {
     // Revoke object URLs when component unmounts
@@ -98,11 +98,11 @@ uploadedFiles.forEach(file => {
     };
   }, [uploadedImages]);
   useEffect(() => {
-  console.log('Title:', title);
-  console.log('Description:', description);
-  console.log('zip:', zip);
-  console.log('itemcategory:', itemcategory);
-}, [title, description, zip, itemcategory]);
+    console.log('Title:', title);
+    console.log('Description:', description);
+    console.log('zip:', zip);
+    console.log('itemcategory:', itemcategory);
+  }, [title, description, zip, itemcategory]);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleUpload,
@@ -116,24 +116,24 @@ uploadedFiles.forEach(file => {
   };
 
   const handleTextSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (title.trim() === '' || description.trim() === '' || zip.trim() === '' || itemcategory.trim() === '') {
-    alert('Title, description, and Zip and itemcategory are required.');
-    return;
-  }
+    if (title.trim() === '' || description.trim() === '' || zip.trim() === '' || itemcategory.trim() === '') {
+      alert('Title, description, and Zip and itemcategory are required.');
+      return;
+    }
 
-  if (typeof onTextSubmit === 'function') {
-    // Pass title, description, and zip directly to onTextSubmit
-    onTextSubmit(title, description, zip);
-  }
+    if (typeof onTextSubmit === 'function') {
+      // Pass title, description, and zip directly to onTextSubmit
+      onTextSubmit(title, description, zip);
+    }
 
-  // Reset input fields if needed
-  setTitle('');
-  setDescription('');
-  setZip('');
-  setItemcategory('');
-};
+    // Reset input fields if needed
+    setTitle('');
+    setDescription('');
+    setZip('');
+    setItemcategory('');
+  };
 
   return (
     <div>
@@ -143,18 +143,22 @@ uploadedFiles.forEach(file => {
           <p>Drag images into click here to add images or drop them into this box</p>
           <div className="plus-sign">+</div>
           <form className="InfoForm" onSubmit={handleTextSubmit}>
+            <p>
+              <label for="ItemName">Item Name/Title</label>
+            </p>
             <input className="ItemNameField"
+              id="ItemName"
               type="text"
-              placeholder="Title"
+              placeholder="Please enter in the title of your item/items"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               onClick={handleTextClick}
             />
             <p>
-            <label for="ItemInfo">Description</label>
+              <label for="ItemInfo">Description</label>
             </p>
             <textarea className='DescrField'
-              id= "ItemInfo"
+              id="ItemInfo"
               type="text"
               placeholder="Please enter any relevant info about your donation (amount, condition, extra info, etc.)"
               value={description}
@@ -164,30 +168,34 @@ uploadedFiles.forEach(file => {
               columns="150"
 
             />
-			<input
+            <p>
+              <label for="ItemZip">Zipcode</label>
+            </p>
+            <input
+              id="ItemZip"
               type="text"
-              placeholder="zip"
+              placeholder="Please enter your current zipcode"
               value={zip}
               onChange={(e) => setZip(e.target.value)}
               onClick={handleTextClick}
             />
-<select
-  value={itemcategory}
-  onChange={(e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setItemcategory(e.target.value);
-  }}
->
-  <option value="">Select Item Category</option>
-  <option value="pencils">Pencils</option>
-  <option value="books">Books</option>
-  <option value="papers">Papers</option>
-  <option value="pens">Pens</option>
-  <option value="erasers">Erasers</option>
-  <option value="markers">Markers</option>
-  <option value="dry erase markers">Dry Erase Markers</option>
-  <option value="dry erase boards">Dry Erase Boards</option>
-</select>
+            <select
+              value={itemcategory}
+              onChange={(e) => {
+                e.preventDefault(); // Prevent default form submission behavior
+                setItemcategory(e.target.value);
+              }}
+            >
+              <option value="">Select Item Category</option>
+              <option value="pencils">Pencils</option>
+              <option value="books">Books</option>
+              <option value="papers">Papers</option>
+              <option value="pens">Pens</option>
+              <option value="erasers">Erasers</option>
+              <option value="markers">Markers</option>
+              <option value="dry erase markers">Dry Erase Markers</option>
+              <option value="dry erase boards">Dry Erase Boards</option>
+            </select>
           </form>
         </div>
       )}
