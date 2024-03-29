@@ -171,7 +171,7 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
             <p>
               <label for="ItemZip">Zipcode</label>
             </p>
-            <input
+            <input className="ZipField"
               id="ItemZip"
               type="text"
               placeholder="Please enter your current zipcode"
@@ -179,7 +179,11 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
               onChange={(e) => setZip(e.target.value)}
               onClick={handleTextClick}
             />
+            <p>
+              <label for="ItemCat">Item Category</label>
+            </p>
             <select
+              id="ItemCat"
               value={itemcategory}
               onChange={(e) => {
                 e.preventDefault(); // Prevent default form submission behavior
