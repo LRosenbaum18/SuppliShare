@@ -1,13 +1,4 @@
-.imageGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 55px;
-  outline: 10px;
-  outline-style: inset;
-  outline-color: orange;
-  margin: auto;
 
-}
 
 .imageGriddy {
 
@@ -23,44 +14,46 @@
 }
 
 .titleContainer {
-  width: auto;
   /* Occupy full width */
-  margin: auto;
-  padding: auto;
   color: #f89033;
-
-
+  margin: 10%;
+  padding: 5%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  position: relative;
 
 }
 
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust minmax values */
+  outline: 10px;
+  outline-style: inset;
+  outline-color: orange;
+  margin: auto;
+  position: relative; /* Add position relative to the grid container */
+  height: 800px;
+}
 
 .imageItem {
-  /* width: 550px;
-  height: 450px; */
   width: 200px;
   height: 200px;
-  transition: transform 0.3s;
-  overflow: hidden;
-  margin: auto;
-  align-items: center;
-
-}
-
-.imageItem:hover {
-  transform: scale(1.1);
-  margin: auto;
-  box-shadow: 0 4px 15px black;
-  display: block;
-
+  
+  position: absolute;
 }
 
 .imageItem img {
   width: 100%;
   height: 100%;
-  object-fit: fit;
-  margin: auto;
+  transition: transform 0.3s ease, margin-top 0.3s ease; /* Added margin-top transition */
+  
+}
 
-
+.imageItem:hover img {
+  transform: scale(1.1);
+  margin-top: -20px; /* Adjust the overlap distance as needed */
+  box-shadow: 0 4px 15px black;
 }
 
 .dropzone {
@@ -75,7 +68,7 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-}
+} 
 
 
 .plus-sign {
@@ -83,6 +76,7 @@
   color: #fff;
   width: 75%;
   height: 75%;
+  margin-bottom: 50px;
 }
 
 .modal {
@@ -234,5 +228,38 @@ table {
   object-fit: fit;
   margin: auto;
 
+
+}
+
+.InfoForm{
+  position: absolute;
+  top: 310px;
+  left: 500px;
+}
+
+.ItemNameField{
+  margin-bottom: 10px;
+}
+
+.DescrField{
+  margin-bottom: 10px;
+  width:750px;
+  resize: none;
+  margin-right: 50px;
+  
+}
+
+.ZipField{
+  margin-bottom: 20px;
+}
+.imageItem:hover img {
+  transform: scale(1.1);
+  margin-top: -20px; /* Adjust the overlap distance as needed */
+  box-shadow: 0 4px 15px black;
+}
+input[type=text], select {
+  border: 1px solid black;
+  width: 50%;
+  padding: 14px 20px;
 
 }
