@@ -22,7 +22,6 @@ app.generic('message', {
         const userId = context.triggerMetadata.connectionContext.userId;
 
         if (messageData.recipientUserId) {
-            // Direct message to a specific user
             context.extraOutputs.set(wpsMsg, [{
                 "actionName": "sendToUser",
                 "userId": messageData.recipientUserId,
@@ -33,7 +32,6 @@ app.generic('message', {
                 "dataType": "json"
             }]);
         } else {
-            // Broadcast message to all users
             context.extraOutputs.set(wpsMsg, [{
                 "actionName": "sendToAll",
                 "data": JSON.stringify({
@@ -43,10 +41,5 @@ app.generic('message', {
                 "dataType": "json"
             }]);
         }
-
-        return {
-            data: "[SYSTEM] Message processed.",
-            dataType: "text",
-        };
     }
 });
