@@ -1,4 +1,3 @@
-// Azure Function: message
 const { app, output, trigger } = require('@azure/functions');
 
 const wpsMsg = output.generic({
@@ -19,14 +18,34 @@ app.generic('message', {
     trigger: wpsTrigger,
     extraOutputs: [wpsMsg],
     handler: async (request, context) => {
-        context.extraOutputs.set(wpsMsg, [{
-            "actionName": "sendToAll",
-            "data": `[${context.triggerMetadata.connectionContext.userId}] ${request.data}`,
-            "dataType": request.dataType
-        }]);
+        const messageData = JSON.parse(request.data);
+        const userId = context.triggerMetadata.connectionContext.userId;
+
+        if (messageData.recipientUserId) {
+            // Direct message to a specific user
+            context.extraOutputs.set(wpsMsg, [{
+                "actionName": "sendToUser",
+                "userId": messageData.recipientUserId,
+                "data": JSON.stringify({
+                    from: userId,
+                    message: messageData.message
+                }),
+                "dataType": "json"
+            }]);
+        } else {
+            // Broadcast message to all users
+            context.extraOutputs.set(wpsMsg, [{
+                "actionName": "sendToAll",
+                "data": JSON.stringify({
+                    from: userId,
+                    message: messageData.message
+                }),
+                "dataType": "json"
+            }]);
+        }
 
         return {
-            data: "[SYSTEM] ack.",
+            data: "[SYSTEM] Message processed.",
             dataType: "text",
         };
     }
