@@ -81,7 +81,7 @@ export const Header = () => {
         <img src={userProfile.profilepic} alt="Profile" />
         {showDropdown && (
           <div className="profile-dropdown" ref={dropdownRef}>
-            <div onClick={handleSettingsClick}>{userProfile.name}</div>
+            <div onClick={handleSettingsClick}>Profile</div>
             {userProfile.role === "Admin" && (
               <>
                 <div onClick={() => navigateTo("/Dashboard")}>Dashboard</div>
