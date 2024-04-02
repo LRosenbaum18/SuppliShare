@@ -1,153 +1,68 @@
-import React, { useState, useEffect, useRef } from "react";
-import { WebPubSubClient } from "@azure/web-pubsub-client";
+import React, { useState, useEffect, useRef } from 'react';
+import { useMsal, useAccount } from '@azure/msal-react';
 
-function UserChat({ from, message }) {
-  return (
-    <div className="align-self-start">
-      <small className="text-muted font-weight-light">from {from}</small>
-      <p className="alert alert-primary text-break">{message}</p>
-    </div>
-  );
-}
+const Chat = () => {
+  const [messages, setMessages] = useState([]);
+  const ws = useRef(null);
+  const messageInputRef = useRef(null);
+  const { accounts } = useMsal();
+  const account = useAccount(accounts[0] || {});
 
-function SelfChat({ message }) {
-  return <div className="align-self-end alert-success alert">{message}</div>;
-}
-
-function Chat() {
-  const [user, setUser] = useState("");
-  const [message, setMessage] = useState("");
-  const [chats, setChats] = useState([]);
-  const [connected, setConnected] = useState(false);
-  const [error, setError] = useState("");
-  const [client, setClient] = useState(null);
-  const endOfMessagesRef = useRef(null);
-
-  async function initiateConnection() {
-    if (!user.trim()) {
-      setError("Username cannot be empty.");
+  useEffect(() => {
+    if (!account) {
+      console.log('User is not authenticated');
       return;
     }
-  
-    try {
-      const response = await fetch(
-        `https://supplishare.azurewebsites.net/api/negotiate?userId=${encodeURIComponent(user)}`,
-        { method: "POST" }
-      );
-      
-      if (!response.ok) {
-        throw new Error(`Negotiation failed: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      
-      const newClient = new WebPubSubClient({ getClientAccessUrl: () => Promise.resolve(data.url) });
-      
-      newClient.on("group-message", (e) => {
-        const data = JSON.parse(e.message.data);
-        appendMessage(data);
-      });
-      
-      await newClient.start();
-      await newClient.joinGroup("chat");
-      setConnected(true);
-      setClient(newClient);
-      setError(""); // Clear any existing errors
-      
-    } catch (error) {
-      setError("Failed to connect. Please check the console for more details.");
-      console.error("Connection failed:", error);
-    }
-  }
-  
 
-  const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+    const connectWebSocket = async () => {
+      // Use the account's username or other unique identifier as needed
+      const userId = account.username;
+
+      const response = await fetch(`https://supplishare.azurewebsites.net/api/negotiate?user=${userId}`, {
+        credentials: 'include',
+      });
+      const { url } = await response.json();
+
+      ws.current = new WebSocket(url);
+      ws.current.onopen = () => console.log('WebSocket connected');
+      ws.current.onmessage = (event) => {
+        setMessages((prevMessages) => [...prevMessages, event.data]);
+      };
+      ws.current.onclose = () => console.log('WebSocket disconnected');
+      ws.current.onerror = (error) => console.error('WebSocket error:', error);
+    };
+
+    connectWebSocket();
+  }, [account]);
+
+  const handleKeyPress = (e) => {
+    if (e.charCode === 13 && ws.current) { // Enter key
+      ws.current.send(messageInputRef.current.value);
+      messageInputRef.current.value = '';
+    }
   };
 
-  useEffect(scrollToBottom, [chats]);
-
-  async function send() {
-    const chatMessage = JSON.stringify({
-      from: user,
-      message: message,
-    });
-    try {
-      await client.sendToGroup("chat", chatMessage, "json", { noEcho: true });
-      appendMessage({ from: user, message });
-      setMessage(""); // Clear input after sending
-    } catch (error) {
-      setError("Failed to send message.");
-      console.error("Send message failed:", error);
-    }
-  }
-
-  function appendMessage(data) {
-    setChats((prev) => [...prev, data]);
+  if (!account) {
+    return <div>Please sign in to use the chat.</div>;
   }
 
   return (
-    <div className="h-100 container">
-      {!connected && (
-        <div className="d-flex h-100 flex-column justify-content-center container">
-          <div className="input-group m-3">
-            <input
-              autoFocus
-              type="text"
-              className="form-control"
-              placeholder="Username"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-primary"
-                type="button"
-                onClick={initiateConnection} // Use the initiateConnection function here
-                disabled={!user}
-              >
-                Connect
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {connected && (
-        <>
-          <div className="chats d-flex flex-column m-2 p-2 bg-light h-100 overflow-auto">
-            {chats.map((item, index) =>
-              item.from === user ? (
-                <SelfChat key={index} message={item.message} />
-              ) : (
-                <UserChat key={index} from={item.from} message={item.message} />
-              )
-            )}
-            <div ref={endOfMessagesRef} />
-          </div>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <div className="input-group m-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Type a message"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <div className="input-group-append">
-              <button
-                className="btn btn-primary"
-                type="button"
-                onClick={send}
-                disabled={!message || !client}
-              >
-                Send
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+    <div>
+      <h1>Serverless Chat App</h1>
+      <input
+        ref={messageInputRef}
+        type="text"
+        id="message"
+        placeholder="Type to chat..."
+        onKeyPress={handleKeyPress}
+      />
+      <div id="messages">
+        {messages.map((message, index) => (
+          <p key={index}>{message}</p>
+        ))}
+      </div>
     </div>
   );
-}
+};
 
 export default Chat;
