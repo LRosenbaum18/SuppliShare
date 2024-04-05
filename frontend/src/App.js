@@ -129,6 +129,7 @@ function App() {
 		<Route path="/UserManagement" element={<UserManagementView />} />
 		<Route path="/Dashboard" element={<DashboardView />} />
 		<Route path="/Chat" element={<Chat />} />
+		
     <Route path="/home/:itemtype/:zipcode/:description/:itempictureurl" element={<PostDetails />} />
 
 

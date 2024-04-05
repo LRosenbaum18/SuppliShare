@@ -1,5 +1,6 @@
-import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useParams, Link } from 'react-router-dom';
+import ChatPopup from './chatpopup.js';
 
 const PostDetails = () => {
   // Extract parameters from the URL
@@ -15,6 +16,11 @@ const PostDetails = () => {
 
   // Clean the image URL
   const cleanedItemPictureUrl = cleanImageUrl(itempictureurl);
+  const [showChatPopup, setShowChatPopup] = useState(false);
+
+  const toggleChatPopup = () => {
+    setShowChatPopup(!showChatPopup);
+  };
 
   return (
     <div className="post-details-container">
@@ -45,8 +51,18 @@ const PostDetails = () => {
         </table>
         {/* <p>Details: {description}</p>
         <p className="zipcode-text">Zipcode: {zipcode}</p> */}
+		 <p><button onClick={toggleChatPopup}>Click here to chat</button></p>
+        
+        {/* Render chat popup if showChatPopup is true */}
+        {showChatPopup && (
+          <ChatPopup
+            onClose={toggleChatPopup}
+            itemtype={itemtype}
+            description={description}
+            itempictureurl={itempictureurl}
+          />
+        )}
       </div>
-
     </div>
   );
 };
