@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useLocation, useParams, Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import ChatPopup from './chatpopup.js';
 
 const PostDetails = () => {

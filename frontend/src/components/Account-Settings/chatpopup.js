@@ -28,9 +28,13 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
       
       <div className="chat-footer">
         {/* Recipient input field */}
-        
-
-        
+        <input
+          type="text"
+          value={recipient}
+          onChange={handleRecipientChange}
+          placeholder="Enter recipient username"
+          className="recipient-input"
+        />
       </div>
       <Chat recipient={recipient} />
       <button onClick={onClose} className="chat-close-button">Close</button>
