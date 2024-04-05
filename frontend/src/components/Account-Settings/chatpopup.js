@@ -29,7 +29,7 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
       <div className="chat-footer">
         {/* Recipient input field */}
         
-        <input type="text" placeholder="Enter message" className="chat-input" />
+
         
       </div>
       <Chat recipient={recipient} />
