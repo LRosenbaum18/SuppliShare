@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import {Header} from './components/shared/Header/Header';
+import Chat from './components/Messaging/chat';
 import Home from './components/Account-Settings/Home';
 import ForgotPasswordEmailSubmission from './views/Login/ForgotPassword';
 import DonorSignUpView from './views/Login/DonorSignup';
@@ -127,7 +128,9 @@ function App() {
 		<Route path="/PostManagement" element={<PostManagementView />} />
 		<Route path="/UserManagement" element={<UserManagementView />} />
 		<Route path="/Dashboard" element={<DashboardView />} />
-		<Route path="/home/:itemtype/:zipcode/:description/:itempictureurl" element={<PostDetails />} />
+		<Route path="/Chat" element={<Chat />} />
+    <Route path="/home/:itemtype/:zipcode/:description/:itempictureurl" element={<PostDetails />} />
+
 
         {/* other routes */}
       </Routes>
