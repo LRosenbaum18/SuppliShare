@@ -51,7 +51,7 @@ const PostDetails = () => {
         </table>
         {/* <p>Details: {description}</p>
         <p className="zipcode-text">Zipcode: {zipcode}</p> */}
-		 <p><button onClick={toggleChatPopup}>Click here to chat</button></p>
+		 <p><button className="customButton" onClick={toggleChatPopup}>Click here to chat</button></p>
         
         {/* Render chat popup if showChatPopup is true */}
         {showChatPopup && (
