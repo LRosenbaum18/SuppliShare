@@ -3,11 +3,17 @@ import ImageUploader from '../shared/ImageUploader/ImageUploader';
 
 import '../shared/ImageUploader/ImageUploader.css';
 import { Link } from 'react-router-dom';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
+
 
 const Home = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [submittedData, setSubmittedData] = useState({ title: '', description: '' });
   const [items, setItems] = useState([]);
+const [showSortingOptions, setShowSortingOptions] = useState(false);
 
   useEffect(() => {
     fetchItems();
@@ -46,6 +52,9 @@ const Home = () => {
   const cleanImageUrl = (url) => {
     return url.replace(/"/g, ''); // Remove %22 (")
   };
+  const toggleSortingOptions = () => {
+    setShowSortingOptions(!showSortingOptions);
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px', marginLeft: '300px' }}>
@@ -53,15 +62,19 @@ const Home = () => {
         Take a look at our items for donation
       </h1>
 
-      {/* Filter buttons */}
+ {/* Filter buttons */}
       <div>
-        <button onClick={() => fetchItems('zipcode/ascending')}>Sort by Zipcode (Asc)</button>
-        <button onClick={() => fetchItems('zipcode/descending')}>Sort by Zipcode (Desc)</button>
-        <button onClick={() => fetchItems('dateposted/ascending')}>Sort by Date Posted (Asc)</button>
-        <button onClick={() => fetchItems('dateposted/descending')}>Sort by Date Posted (Desc)</button>
-		<button onClick={() => fetchItems('itemcategory/ascending')}>Sort by Item Category (Asc)</button>
-<button onClick={() => fetchItems('itemcategory/descending')}>Sort by Item Category (Desc)</button>
-
+        <div onClick={toggleSortingOptions}>Filter<FontAwesomeIcon icon={faFilter} /></div>
+        {showSortingOptions && (
+          <div>
+            <button onClick={() => fetchItems('zipcode/ascending')}>Sort by Zipcode (Asc)</button>
+            <button onClick={() => fetchItems('zipcode/descending')}>Sort by Zipcode (Desc)</button>
+            <button onClick={() => fetchItems('dateposted/ascending')}>Sort by Date Posted (Asc)</button>
+            <button onClick={() => fetchItems('dateposted/descending')}>Sort by Date Posted (Desc)</button>
+            <button onClick={() => fetchItems('itemcategory/ascending')}>Sort by Item Category (Asc)</button>
+            <button onClick={() => fetchItems('itemcategory/descending')}>Sort by Item Category (Desc)</button>
+          </div>
+        )}
       </div>
 
       {/* Display items fetched from the backend */}
