@@ -58,7 +58,7 @@ const [showSortingOptions, setShowSortingOptions] = useState(false);
 
  return (
     <div style={{ textAlign: 'center', marginTop: '50px'}}>
-      <h1 style={{ color: '#f89033', fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
+      <h1 className='gradientText' style={{ fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
         Take a look at our items
         <span onClick={toggleSortingOptions} style={{ cursor: 'pointer', marginLeft: '20px' }}>
           Filter<FontAwesomeIcon icon={faFilter} />

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useMsal, useAccount } from '@azure/msal-react';
 import './ImageUploader.css';
 
 const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => {
@@ -8,6 +9,72 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
   const [description, setDescription] = useState('');
   const [zip, setZip] = useState('');
   const [itemcategory, setItemcategory] = useState('');
+  const [email, setEmail] = useState('');
+  const { accounts } = useMsal(); // Get MSAL accounts
+  const account = useAccount(accounts[0] || {}); // Get the first account
+
+  const handleSubmit = async () => {
+    try {
+      if (title.trim() === '' || description.trim() === '' || zip.trim() === '' || itemcategory.trim() === '') {
+        alert('Title, description, zip, and item category are required.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('zip', zip);
+      formData.append('itemcategory', itemcategory);
+	  
+
+      uploadedImages.forEach(file => {
+        formData.append('image', file);
+      });
+
+      const response = await fetch('http://localhost:5000/uploadimage', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        console.error('Failed to upload images. Status:', response.status);
+        console.error('Response:', await response.text());
+        throw new Error(`Failed to upload images. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Response from server:', data);
+
+      if (data && data.uploadedData && data.uploadedData.urls) {
+        if (onTextSubmit) {
+          onTextSubmit(title, description, data.uploadedData.urls, zip, itemcategory);
+        }
+
+        setUploadedImages((prevImages) => [
+          ...prevImages,
+          {
+            name: 'Image',
+            dataURL: data.uploadedData.urls[0],
+          },
+        ]);
+
+        if (onUpload) {
+          onUpload(uploadedImages);
+        }
+
+        console.log('Title:', title);
+        console.log('Description:', description);
+        console.log('zipcode:', zip);
+        console.log('itemcategory:', itemcategory);
+        console.log('Image URL:', data.uploadedData.urls[0]);
+		console.log('email',account.username);
+      } else {
+        console.error('Invalid response from server:', data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const handleUpload = useCallback(
     async (uploadedFiles) => {
@@ -18,26 +85,27 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
           alert('Title and description and zip and itemcategory are required.');
           return;
         }
-
         const formData = new FormData();
         formData.append('title', title);
-		console.log("titleform data after apend:", title);
+        console.log("titleform data after apend:", title);
         formData.append('description', description);
-		formData.append('zip', zip);
-		formData.append('itemcategory', itemcategory);
-		console.log("descform data after apend:", description);
-		console.log("zipform data after apend:", zip);
-		console.log("itemcategform data after apend:", itemcategory);
-		console.log("FormData after apending desc and title and zip", formData);
+        formData.append('zip', zip);
+        formData.append('itemcategory', itemcategory);
+		formData.append('email', account.username);
+        console.log("descform data after apend:", description);
+        console.log("zipform data after apend:", zip);
+        console.log("itemcategform data after apend:", itemcategory);
+        console.log("FormData after apending desc and title and zip", formData);
+		console.log("form data after appending email",);
 
         console.log('Uploaded Files:', uploadedFiles);
 
 
-// Iterate over the imageUrls array and append each URL to the FormData object
-uploadedFiles.forEach(file => {
-  formData.append('image', file); // Append each file with the key 'image'
-});
-		console.log("FormData after apending img", formData);
+        // Iterate over the imageUrls array and append each URL to the FormData object
+        uploadedFiles.forEach(file => {
+          formData.append('image', file); // Append each file with the key 'image'
+        });
+        console.log("FormData after apending img", formData);
 
         const response = await fetch('http://localhost:5000/uploadimage', {
           method: 'POST',
@@ -61,24 +129,24 @@ uploadedFiles.forEach(file => {
             onTextSubmit(title, description, data.uploadedData.urls, zip, itemcategory);
           }
 
-        setUploadedImages((prevImages) => [
-          ...prevImages,
-          {
-            name: 'Image',
-            dataURL: data.uploadedData.urls[0],
-          },
-        ]);
-		console.log('Image URL:', data.uploadedData.urls[0]);
+          setUploadedImages((prevImages) => [
+            ...prevImages,
+            {
+              name: 'Image',
+              dataURL: data.uploadedData.urls[0],
+            },
+          ]);
+          console.log('Image URL:', data.uploadedData.urls[0]);
 
-        if (onUpload) {
+          if (onUpload) {
             onUpload(uploadedFiles);
           }
 
           // Log title, description, and URL
           console.log('Title:', title);
           console.log('Description:', description);
-		  console.log('zipcode:', zip);
-		  console.log('itemcategory:', itemcategory);
+          console.log('zipcode:', zip);
+          console.log('itemcategory:', itemcategory);
           console.log('Image URL:', data.uploadedData.urls[0]);
         } else {
           console.error('Invalid response from server:', data);
@@ -87,7 +155,7 @@ uploadedFiles.forEach(file => {
         console.error('Error:', error);
       }
     },
-    [onUpload, title, description,  zip, itemcategory, onTextSubmit]
+    [onUpload, title, description, zip, itemcategory, onTextSubmit]
   );
   useEffect(() => {
     // Revoke object URLs when component unmounts
@@ -96,91 +164,106 @@ uploadedFiles.forEach(file => {
         URL.revokeObjectURL(image.dataURL);
       });
     };
-  }, [uploadedImages]);
-  useEffect(() => {
+  }, [uploadedImages], );
+useEffect(() => {
+  if (account) {
+    const userEmail = account.username || ''; // Get the user's email
+    setEmail(userEmail); // Set the email state
+  } else {
+    // Set default email value to "guest"
+    setEmail('guest');
+    console.log('Default email set to "guest"');
+  }
+  
   console.log('Title:', title);
   console.log('Description:', description);
   console.log('zip:', zip);
   console.log('itemcategory:', itemcategory);
-}, [title, description, zip, itemcategory]);
+  
+  // Make sure to check if account is not null before accessing its properties
+  console.log('email', account ? account.username : '');
+}, [title, description, zip, itemcategory, account]);
 
   const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleUpload,
+    onDrop: (acceptedFiles, rejectedFiles, event) => {
+      // Prevent the default behavior of the drop event
+      event.preventDefault();
+      // Call your handleUpload function with acceptedFiles
+      handleUpload(acceptedFiles);
+    },
     accept: 'image/jpeg',
     maxFiles: 5,
     maxSize: 10 * 1024 * 1024, // 10MB in bytes
   });
 
-  const handleTextClick = (e) => {
-    e.stopPropagation(); // Stop the click event from reaching the parent div
-  };
+  // const handleTextClick = (e) => {
+  //   e.stopPropagation(); // Stop the click event from reaching the parent div
+  // };
 
-  const handleTextSubmit = (e) => {
-  e.preventDefault();
-
-  if (title.trim() === '' || description.trim() === '' || zip.trim() === '' || itemcategory.trim() === '') {
-    alert('Title, description, and Zip and itemcategory are required.');
-    return;
-  }
-
-  if (typeof onTextSubmit === 'function') {
-    // Pass title, description, and zip directly to onTextSubmit
-    onTextSubmit(title, description, zip);
-  }
-
-  // Reset input fields if needed
-  setTitle('');
-  setDescription('');
-  setZip('');
-  setItemcategory('');
-};
 
   return (
     <div>
       {showDropzone && (
-        <div {...getRootProps()} className="dropzone" id="dropzoneEditor">
+        <div {...getRootProps({ onClick: event => event.stopPropagation() })} className="dropzone" id="dropzoneEditor">
           <input {...getInputProps()} />
           <p>Drag images into click here to add images or drop them into this box</p>
           <div className="plus-sign">+</div>
-          <form onSubmit={handleTextSubmit}>
-            <input
+          <form className="InfoForm" onSubmit={handleSubmit}>
+            <p>
+              <label htmlFor="ItemName">Item Name/Title</label> {/* Corrected htmlFor attribute */}
+            </p>
+            <input className="ItemNameField"
+              id="ItemName"
               type="text"
-              placeholder="Title"
+              placeholder="Please enter in the title of your item/items"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              onClick={handleTextClick}
             />
-            <input
+            <p className="DescLabel">
+              <label htmlFor="ItemInfo">Description</label> {/* Corrected htmlFor attribute */}
+            </p>
+            <textarea className='DescrField'
+              id="ItemInfo"
               type="text"
-              placeholder="Description"
+              placeholder="Please enter any relevant info about your donation (amount, condition, extra info, etc.)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              onClick={handleTextClick}
+              rows="6"
+              columns="150"
             />
-			<input
+            <p>
+              <label htmlFor="ItemZip">Zipcode</label> {/* Corrected htmlFor attribute */}
+            </p>
+            <input className="ZipField"
+              id="ItemZip"
               type="text"
-              placeholder="zip"
+              placeholder="Please enter your current zipcode"
               value={zip}
               onChange={(e) => setZip(e.target.value)}
-              onClick={handleTextClick}
             />
-<select
-  value={itemcategory}
-  onChange={(e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setItemcategory(e.target.value);
-  }}
->
-  <option value="">Select Item Category</option>
-  <option value="pencils">Pencils</option>
-  <option value="books">Books</option>
-  <option value="papers">Papers</option>
-  <option value="pens">Pens</option>
-  <option value="erasers">Erasers</option>
-  <option value="markers">Markers</option>
-  <option value="dry erase markers">Dry Erase Markers</option>
-  <option value="dry erase boards">Dry Erase Boards</option>
-</select>
+            <p className="CatLabel">
+              <label className='CategoryLabel' htmlFor="ItemCat">Item Category</label> {/* Corrected htmlFor attribute */}
+            </p>
+			
+            <select
+              id="ItemCat"
+              value={itemcategory}
+              onChange={(e) => {
+                e.preventDefault(); // Prevent default form submission behavior
+                setItemcategory(e.target.value);
+              }}
+            >
+              <option value="">Select Item Category</option>
+              <option value="pencils">Pencils</option>
+              <option value="books">Books</option>
+              <option value="papers">Papers</option>
+              <option value="pens">Pens</option>
+              <option value="erasers">Erasers</option>
+              <option value="markers">Markers</option>
+              <option value="dry erase markers">Dry Erase Markers</option>
+              <option value="dry erase boards">Dry Erase Boards</option>
+            </select>
+            <button onClick={handleSubmit}>Submit Form</button>
           </form>
         </div>
       )}
