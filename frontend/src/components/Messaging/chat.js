@@ -59,7 +59,7 @@ const Chat = () => {
 
     return (
         <div>
-            <h1>Serverless Chat App</h1>
+            <h1>Chat with User: </h1>
             <div>
                 <input
                     type="text"

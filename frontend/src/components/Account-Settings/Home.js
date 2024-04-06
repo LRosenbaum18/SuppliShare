@@ -3,11 +3,17 @@ import ImageUploader from '../shared/ImageUploader/ImageUploader';
 
 import '../shared/ImageUploader/ImageUploader.css';
 import { Link } from 'react-router-dom';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './Home.css';
+
+
 
 const Home = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [submittedData, setSubmittedData] = useState({ title: '', description: '' });
   const [items, setItems] = useState([]);
+const [showSortingOptions, setShowSortingOptions] = useState(false);
 
   useEffect(() => {
     fetchItems();
@@ -46,53 +52,53 @@ const Home = () => {
   const cleanImageUrl = (url) => {
     return url.replace(/"/g, ''); // Remove %22 (")
   };
+  const toggleSortingOptions = () => {
+    setShowSortingOptions(!showSortingOptions);
+  };
 
-  return (
-    <div style={{ textAlign: 'center', marginTop: '50px', marginLeft: '300px' }}>
-      <h1 style={{ color: '#ff9b82', fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
-        Take a look at our items for donation
+ return (
+    <div style={{ textAlign: 'center', marginTop: '50px'}}>
+      <h1 style={{ color: '#f89033', fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
+        Take a look at our items
+        <span onClick={toggleSortingOptions} style={{ cursor: 'pointer', marginLeft: '20px' }}>
+          Filter<FontAwesomeIcon icon={faFilter} />
+        </span>
       </h1>
 
-      {/* Filter buttons */}
-      <div>
-        <button onClick={() => fetchItems('zipcode/ascending')}>Sort by Zipcode (Asc)</button>
-        <button onClick={() => fetchItems('zipcode/descending')}>Sort by Zipcode (Desc)</button>
-        <button onClick={() => fetchItems('dateposted/ascending')}>Sort by Date Posted (Asc)</button>
-        <button onClick={() => fetchItems('dateposted/descending')}>Sort by Date Posted (Desc)</button>
-		<button onClick={() => fetchItems('itemcategory/ascending')}>Sort by Item Category (Asc)</button>
-<button onClick={() => fetchItems('itemcategory/descending')}>Sort by Item Category (Desc)</button>
-
-      </div>
-
-      {/* Display items fetched from the backend */}
-      <div>
-        <h2>Take a look at our items</h2>
-        <div className="imageGrid">
-          {items.map((item, index) => (
-            <div key={index}>
-              <h3 className="titleContainer">{item.itemtype}</h3>
-			  <h2 className="titleContainer">{item.itemcategory}</h2>
-              {/* Clean the image URLs and map them to img elements */}
-              {item.itempictureurl.split(',').map((url, idx) => (
-                <div key={idx} className="imageItem" onClick={() => openModal(item)}>
-                  <Link to={{
-                    pathname: `/home/${item.itemtype}/${item.zipcode}/${item.description}/${encodeURIComponent(url)}`, // encode the URL parameter
-                    state: { itemtype: item.itemtype, zipcode: item.zipcode, description: item.description, itempictureurl: url }
-                  }}>
-                    <img src={cleanImageUrl(url.trim())} alt={item.itemtype} />
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ))}
+      {showSortingOptions && (
+        <div style={{ marginTop: '2%' }}>
+          <button className="customButton" onClick={() => fetchItems('zipcode/ascending')}>Sort by Zipcode (Asc)</button>
+          <button className="customButton" onClick={() => fetchItems('zipcode/descending')}>Sort by Zipcode (Desc)</button>
+          <button className="customButton" onClick={() => fetchItems('dateposted/ascending')}>Sort by Date Posted (Asc)</button>
+          <button className="customButton" onClick={() => fetchItems('dateposted/descending')}>Sort by Date Posted (Desc)</button>
+          <button className="customButton" onClick={() => fetchItems('itemcategory/ascending')}>Sort by Item Category (Asc)</button>
+          <button className="customButton" onClick={() => fetchItems('itemcategory/descending')}>Sort by Item Category (Desc)</button>
         </div>
+      )}
+
+      <div className="imageGrid" style={{ marginTop: '2%' }}>
+        {items.map((item, index) => (
+          <div key={index}>
+            <h3 className="titleContainer">{item.itemtype}</h3>
+            <h2 className="titleContainer">{item.itemcategory}</h2>
+            {item.itempictureurl.split(',').map((url, idx) => (
+              <div key={idx} className="imageItem" onClick={() => openModal(item)}>
+                <Link to={{
+                  pathname: `/home/${item.itemtype}/${item.zipcode}/${item.description}/${encodeURIComponent(url)}`, // encode the URL parameter
+                  state: { itemtype: item.itemtype, zipcode: item.zipcode, description: item.description, itempictureurl: url }
+                }}>
+                  <img src={cleanImageUrl(url.trim())} alt={item.itemtype} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        ))}
       </div>
 
       <div style={{ marginTop: '20px' }}>
         <ImageUploader showDropzone={false} showImages={false} onTextSubmit={handleSubmittedData} />
       </div>
 
-      {/* Modal */}
       {selectedItem && (
         <div className="modal" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

@@ -1,19 +1,13 @@
-/* Home.css */
-
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the minmax values as needed */
-  gap: 16px; /* Adjust the gap between images */
-}
-
-.image-item {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.image-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Maintain aspect ratio and cover the container */
+.customButton {
+  padding: 10px 20px;
+  background-color: #f89033;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  box-shadow: 0 0px 5px black;
+  transition: all 0.3s ease;
 }
