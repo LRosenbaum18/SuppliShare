@@ -57,6 +57,7 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
             dataURL: data.uploadedData.urls[0],
           },
         ]);
+		console.log('Image URL:', data.uploadedData.urls[0]);
 
         if (onUpload) {
           onUpload(uploadedImages);
@@ -79,6 +80,7 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
   const handleUpload = useCallback(
     async (uploadedFiles) => {
       console.log('handleUpload called');
+	  
 
       try {
         if (title.trim() === '' || description.trim() === '' || zip.trim() === '' || itemcategory.trim() === '') {
@@ -194,6 +196,7 @@ useEffect(() => {
     accept: 'image/jpeg',
     maxFiles: 5,
     maxSize: 10 * 1024 * 1024, // 10MB in bytes
+	autoUpload: false
   });
 
   // const handleTextClick = (e) => {

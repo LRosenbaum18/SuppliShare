@@ -24,8 +24,6 @@
 }
 
 .titleContainer {
-  margin: 10%;
-  padding: 5%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   position: relative;
@@ -34,7 +32,21 @@
   background-clip: text; /* Apply background to text */
   color: transparent; /* Set text color to transparent */
   -webkit-text-stroke: 0.5px black; /* Add black outline around the text */
+margin: auto;
 
+
+
+}
+.titleContainerright{
+	
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  position: relative;
+  	 background: linear-gradient(to bottom, #f9c051 50%, #f89033 50%); /* Define gradient colors */
+  -webkit-background-clip: text; /* Apply background to text */
+  background-clip: text; /* Apply background to text */
+  color: transparent; /* Set text color to transparent */
+  -webkit-text-stroke: 0.5px black; /* Add black outline around the text */
+margin-right: auto;
 
 
 
@@ -163,7 +175,7 @@
 }
 
 .Box {
-  background-color: red;
+  background-color: #f9c454;
   display: flex;
   width: 800px;
   height: 250px;
@@ -177,6 +189,8 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: auto;
+  padding-top: 2%;
   /* Adjust the height as needed */
 }
 

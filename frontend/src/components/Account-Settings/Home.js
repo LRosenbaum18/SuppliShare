@@ -85,8 +85,8 @@ const Home = () => {
           <div key={index}>
             <h3 className="titleContainer">{item.listingname}</h3>
             <h2 className="titleContainer">{item.itemcategory}</h2>
-			<p>Listing ID: {item.listingid}</p> {/* Display listingID */}
-            <p>Username: {item.username}</p> {/* Display username */}
+			<p className="titleContainer">Listing ID: {item.listingid}</p> {/* Display listingID */}
+            <p className="titleContainer">Username: {item.username}</p> {/* Display username */}
             {item.itempictureurl && (
               <div className="imageItem" onClick={() => setSelectedItem(item)}>
                 <Link to={{
