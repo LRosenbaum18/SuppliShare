@@ -51,7 +51,9 @@ function App() {
 		<Route path="/Dashboard" element={<DashboardView />} />
 		<Route path="/Chat" element={<Chat />} />
 		
-    <Route path="/home/:itemtype/:zipcode/:description/:itempictureurl" element={<PostDetails />} />
+    <Route path="/home/:listingname/:listingid/:username/:zipcode/:description/:itempictureurl" element={<PostDetails />} />
+
+
 
 
         {/* other routes */}

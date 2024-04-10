@@ -90,11 +90,18 @@ const Home = () => {
             {item.itempictureurl && (
               <div className="imageItem" onClick={() => setSelectedItem(item)}>
                 <Link to={{
-                  pathname: `/home/${item.listingname}/${item.zipcode}/${item.description}/${encodeURIComponent(item.itempictureurl)}`, // encode the URL parameter
-                  state: { itemtype: item.listingname, zipcode: item.zipcode, description: item.description, itempictureurl: item.itempictureurl }
-                }}>
-                  <img src={cleanImageUrl(item.itempictureurl.trim())} alt={item.listingname} />
-                </Link>
+  pathname: `/home/${item.listingname}/${item.listingid}/${item.username}/${item.zipcode}/${item.description}/${encodeURIComponent(item.itempictureurl)}`,
+  state: { 
+    listingname: item.listingname, 
+    listingid: item.listingid, 
+    username: item.username,
+    zipcode: item.zipcode, 
+    description: item.description, 
+    itempictureurl: item.itempictureurl
+  }
+}}>
+  <img src={cleanImageUrl(item.itempictureurl.trim())} alt={item.listingname} />
+</Link>
               </div>
             )}
           </div>
