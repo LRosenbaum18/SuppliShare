@@ -3,9 +3,9 @@ import Chat from '../Messaging/chat';
 import { useMsal, useAccount } from '@azure/msal-react';
 import './chatpopup.css';
 
-const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
+const ChatPopup = ({ onClose, itemtype, itempictureurl, recipient }) => {
   const [sender, setSender] = useState('');
-  const [recipient, setRecipient] = useState('');
+
   const { accounts } = useMsal();
   const account = useAccount(accounts[0] || {});
 
@@ -16,7 +16,8 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
     }
   }, [account]);
 
-  const handleRecipientChange = (e) => {
+
+    const handleSenderChange = (e) => {
     setSender(e.target.value);
   };
 
@@ -32,7 +33,7 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
         {/* sender input field */}
         
       </div>
-      <Chat sender={sender} recipient={recipient} />
+      <Chat recipient={recipient} />
       
     </div>
   );

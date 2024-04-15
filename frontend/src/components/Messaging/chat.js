@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMsal, useAccount } from '@azure/msal-react';
 
-const Chat = () => {
+const Chat = ({recipient}) => {
     const [messages, setMessages] = useState([]);
-    const [recipient, setRecipient] = useState('');
+    
     const ws = useRef(null);
     const messageInputRef = useRef(null);
     const { accounts } = useMsal();
@@ -45,7 +45,7 @@ useEffect(() => {
 
     const handleSendMessage = () => {
         const messageText = messageInputRef.current.value.trim();
-        if (ws.current && messageText !== '') {
+        if (ws.current && messageText !== '' && recipient!=='') {
             const message = {
                 recipientUserId: recipient,
                 message: messageText
@@ -60,7 +60,7 @@ useEffect(() => {
 
     return (
         <div>
-            <h1>Chat with User: </h1>
+            <h1>Chat with Donor: </h1>
             
            <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input

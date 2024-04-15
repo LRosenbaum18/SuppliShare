@@ -65,7 +65,7 @@ const PostDetails = () => {
               itemtype={listingname}
               description={description}
               itempictureurl={itempictureurl}
-			  
+			  recipient={username}
             />
           )}
         </div>
