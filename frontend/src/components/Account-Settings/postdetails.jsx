@@ -34,7 +34,7 @@ const PostDetails = () => {
             <thead>
               <tr>
                 <th className="titleContainer">Item Details</th>
-                <th className="titleContainerright">></th>
+                <th className="titleContainerright"></th>
               </tr>
             </thead>
             <tbody>
@@ -65,6 +65,7 @@ const PostDetails = () => {
               itemtype={listingname}
               description={description}
               itempictureurl={itempictureurl}
+			  
             />
           )}
         </div>

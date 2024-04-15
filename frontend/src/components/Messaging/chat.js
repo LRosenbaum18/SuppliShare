@@ -61,15 +61,8 @@ useEffect(() => {
     return (
         <div>
             <h1>Chat with User: </h1>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Recipient User ID (leave blank for broadcast)"
-                    value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
-                />
-            </div>
-            <div>
+            
+           <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                     ref={messageInputRef}
                     type="text"

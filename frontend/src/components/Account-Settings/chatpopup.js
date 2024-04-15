@@ -4,6 +4,7 @@ import { useMsal, useAccount } from '@azure/msal-react';
 import './chatpopup.css';
 
 const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
+  const [sender, setSender] = useState('');
   const [recipient, setRecipient] = useState('');
   const { accounts } = useMsal();
   const account = useAccount(accounts[0] || {});
@@ -11,12 +12,12 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
   // Fetch the username from the authentication system or user context
   useEffect(() => {
     if (account) {
-      setRecipient(account.username);
+      setSender(account.username);
     }
   }, [account]);
 
   const handleRecipientChange = (e) => {
-    setRecipient(e.target.value);
+    setSender(e.target.value);
   };
 
   return (
@@ -24,20 +25,15 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl }) => {
       <div className="chat-header">
         <img src={itempictureurl} alt={itemtype} className="chat-image" />
         <h3 className="chat-title">{itemtype}</h3>
+		<button onClick={onClose} className="chat-close-button">Close</button>
       </div>
       
       <div className="chat-footer">
-        {/* Recipient input field */}
-        <input
-          type="text"
-          value={recipient}
-          onChange={handleRecipientChange}
-          placeholder="Enter recipient username"
-          className="recipient-input"
-        />
+        {/* sender input field */}
+        
       </div>
-      <Chat recipient={recipient} />
-      <button onClick={onClose} className="chat-close-button">Close</button>
+      <Chat sender={sender} recipient={recipient} />
+      
     </div>
   );
 };
