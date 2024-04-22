@@ -26,15 +26,16 @@ const ChatPopup = ({ onClose, itemtype, itempictureurl, recipient }) => {
       <div className="chat-header">
         <img src={itempictureurl} alt={itemtype} className="chat-image" />
         <h3 className="chat-title">{itemtype}</h3>
-		<button onClick={onClose} className="chat-close-button">Close</button>
+        <button onClick={onClose} className="chat-close-button">Close</button>
       </div>
-      
+
       <div className="chat-footer">
         {/* sender input field */}
-        
       </div>
-      <Chat recipient={recipient} />
-      
+
+      <div className="chat-container">
+        <Chat recipient={recipient} />
+      </div>
     </div>
   );
 };

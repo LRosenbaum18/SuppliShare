@@ -7,6 +7,7 @@
   border-radius: 5px;
   padding: 20px;
   height: 50%;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -73,6 +74,7 @@
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+  margin: auto;
 }
 
 .chat-close-button {
@@ -81,4 +83,8 @@
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+}
+.chat-container {
+  height: calc(100% - 80px); /* Adjust the height of the chat container */
+  overflow-y: auto; /* Enable vertical scroll */
 }

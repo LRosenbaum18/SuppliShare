@@ -73,7 +73,11 @@ useEffect(() => {
             </div>
             <div id="messages">
                 {messages.map((msg, index) => (
-                    <p key={index} className={msg.type === 'received' ? "received" : "sent"}>
+                    <p key={index} style={{
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word',
+	 padding: '15px'
+  }} className={msg.type === 'received' ? "received" : "sent"}>
                         {msg.recipientUserId ? `[DM to ${msg.recipientUserId}] ` : ""}
                         {msg.message}
                     </p>
