@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '../shared/ImageUploader/ImageUploader';
-
-import '../shared/ImageUploader/ImageUploader.css';
 import { Link } from 'react-router-dom';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,34 +12,27 @@ const Home = () => {
   const [showSortingOptions, setShowSortingOptions] = useState(false);
 
   useEffect(() => {
-    fetchListings();
+    fetchListings('http://localhost:5000/api/listings'); // Default listing fetch
   }, []);
 
-  const fetchListings = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/listings');
-      if (!response.ok) {
-        throw new Error('Failed to fetch listings');
-      }
-      const data = await response.json();
-      // Map the data to include the image URL from supplishare.imageurl
-      const updatedData = data.map(item => ({
-        ...item,
-        itempictureurl: item.imageurls[0], // Assuming the image URLs are stored in the 'imageurls' property
-        listingname: item.listingname // Change itemType to listingname
-		
-      }));
-      setItems(updatedData);
-	  console.log('set items', setItems);
-	  console.log('updated Data', updatedData);
-    } catch (error) {
-      console.error('Error fetching listings:', error);
+const fetchListings = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch listings');
     }
-  };
+    const data = await response.json();
+    setItems(data.map(item => ({
+      ...item,
+      itempictureurl: item.imageurls && item.imageurls.length > 0 ? item.imageurls[0] : null // Get the first image URL
+    })));
+  } catch (error) {
+    console.error('Error fetching listings:', error);
+  }
+};
 
   const handleSubmittedData = (data) => {
     setSubmittedData(data);
-    console.log("data submitted handlesubmitted", submittedData);
   };
 
   const openModal = (item) => {
@@ -60,6 +51,25 @@ const Home = () => {
     setShowSortingOptions(!showSortingOptions);
   };
 
+  // Function to handle sorting and fetching sorted listings
+const handleSort = async (sortType, sortBy) => {
+  const sortUrl = `http://localhost:5000/api/listings/sort/${sortBy}/${sortType}`;
+  try {
+    const response = await fetch(sortUrl);
+    if (!response.ok) {
+      throw new Error('Failed to fetch sorted listings');
+    }
+    const data = await response.json();
+    console.log('Sorted data:', data); // Log the sorted data
+    setItems(data.map(item => ({
+      ...item,
+      itempictureurl: item.imageurls && item.imageurls.length > 0 ? item.imageurls[0] : null // Get the first image URL
+    })));
+  } catch (error) {
+    console.error('Error fetching sorted listings:', error);
+  }
+};
+
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1 className='gradientText' style={{ fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
@@ -71,12 +81,27 @@ const Home = () => {
 
       {showSortingOptions && (
         <div style={{ marginTop: '2%' }}>
-          <button className="customButton" onClick={() => fetchListings('zipcode/ascending')}>Sort by Zipcode (Asc)</button>
-          <button className="customButton" onClick={() => fetchListings('zipcode/descending')}>Sort by Zipcode (Desc)</button>
-          <button className="customButton" onClick={() => fetchListings('dateposted/ascending')}>Sort by Date Posted (Asc)</button>
-          <button className="customButton" onClick={() => fetchListings('dateposted/descending')}>Sort by Date Posted (Desc)</button>
-          <button className="customButton" onClick={() => fetchListings('itemcategory/ascending')}>Sort by Item Category (Asc)</button>
-          <button className="customButton" onClick={() => fetchListings('itemcategory/descending')}>Sort by Item Category (Desc)</button>
+          <button className="customButton" onClick={() => handleSort('asc', 'dateposted')}>
+  Sort by Date Posted (Asc)
+</button>
+
+<button className="customButton" onClick={() => handleSort('desc', 'dateposted')}>
+  Sort by Date Posted (Desc)
+</button>
+<button className="customButton" onClick={() => handleSort('asc', 'zipcode')}>
+  Sort by Zipcode (Asc)
+</button>
+
+<button className="customButton" onClick={() => handleSort('desc', 'zipcode')}>
+  Sort by Zipcode (Desc)
+</button>
+<button className="customButton" onClick={() => handleSort('asc', 'itemcategory')}>
+  Sort by itemcategory (asc)
+</button>
+<button className="customButton" onClick={() => handleSort('desc', 'itemcategory')}>
+  Sort by itemcategory (Desc)
+</button>
+		  
         </div>
       )}
 
@@ -84,24 +109,23 @@ const Home = () => {
         {items.map((item, index) => (
           <div key={index} style={{ outline: '1px inset black' }}>
             <h3 className="titleContainer">{item.listingname}</h3>
-            
-			{/* Display listingID */}
-            {/* Display username */}
             {item.itempictureurl && (
-              <div className="imageItem" onClick={() => setSelectedItem(item)}>
-                <Link to={{
-  pathname: `/home/${item.listingname}/${item.listingid}/${item.username}/${item.zipcode}/${item.description}/${encodeURIComponent(item.itempictureurl)}`,
-  state: { 
-    listingname: item.listingname, 
-    listingid: item.listingid, 
-    username: item.username,
-    zipcode: item.zipcode, 
-    description: item.description, 
-    itempictureurl: item.itempictureurl
-  }
-}}>
-  <img src={cleanImageUrl(item.itempictureurl.trim())} alt={item.listingname} />
-</Link>
+              <div className="imageItem" onClick={() => openModal(item)}>
+                <Link
+                  to={{
+                    pathname: `/home/${item.listingname}/${item.listingid}/${item.username}/${item.zipcode}/${item.description}/${encodeURIComponent(item.itempictureurl)}`,
+                    state: {
+                      listingname: item.listingname,
+                      listingid: item.listingid,
+                      username: item.username,
+                      zipcode: item.zipcode,
+                      description: item.description,
+                      itempictureurl: item.itempictureurl
+                    }
+                  }}
+                >
+                  <img src={cleanImageUrl(item.itempictureurl.trim())} alt={item.listingname} />
+                </Link>
               </div>
             )}
           </div>
