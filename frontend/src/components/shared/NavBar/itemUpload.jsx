@@ -15,7 +15,7 @@ const ItemUpload = ({ onTextSubmit }) => {
 		  
         />
       </div>
-      <p>image</p>
+      
       
     </div>
   );

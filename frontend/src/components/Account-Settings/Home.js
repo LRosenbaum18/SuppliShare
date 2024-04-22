@@ -82,7 +82,7 @@ const Home = () => {
 
       <div className="imageGrid" style={{ marginTop: '2%' }}>
         {items.map((item, index) => (
-          <div key={index}>
+          <div key={index} style={{ outline: '1px inset black' }}>
             <h3 className="titleContainer">{item.listingname}</h3>
             
 			{/* Display listingID */}

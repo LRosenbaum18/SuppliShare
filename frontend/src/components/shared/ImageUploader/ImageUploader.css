@@ -2,9 +2,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   /* Adjust minmax values */
-  outline: 10px;
-  outline-style: inset;
-  outline-color: orange;
+  
   margin: auto;
   position: relative;
   /* Add position relative to the grid container */
@@ -344,4 +342,12 @@ table {
 /* Remove width styling from ZipField */
 .InfoForm .ZipField input[type=text] {
   width: auto; /* Let the width adjust based on content */
+}
+
+.previewImages{
+  position: absolute;
+  
+  top: 75%;
+  left: 0;
+  right: 0;
 }
