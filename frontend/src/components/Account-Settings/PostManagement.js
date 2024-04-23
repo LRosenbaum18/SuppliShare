@@ -7,7 +7,6 @@ import './Home.css';
 
 const PostManagementView = () => {
 const [selectedItem, setSelectedItem] = useState(null);
-  const [submittedData, setSubmittedData] = useState({ title: '', description: '' });
   const [items, setItems] = useState([]);
   const [showSortingOptions, setShowSortingOptions] = useState(false);
 
@@ -32,7 +31,7 @@ const fetchListings = async (url) => {
 };
 
   const handleSubmittedData = (data) => {
-    setSubmittedData(data);
+    
   };
 
   const openModal = (item) => {
