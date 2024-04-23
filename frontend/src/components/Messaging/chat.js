@@ -69,7 +69,7 @@ useEffect(() => {
                     placeholder="Type your message..."
                     onKeyPress={(e) => e.charCode === 13 && handleSendMessage()} // Send on Enter
                 />
-                <button onClick={handleSendMessage}>Send</button>
+                <button style={{ marginRight: '50px' }} onClick={handleSendMessage}>Send</button>
             </div>
             <div id="messages">
                 {messages.map((msg, index) => (
