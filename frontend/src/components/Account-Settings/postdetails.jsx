@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, useAccount  } from "@azure/msal-react";
 import ChatPopup from './chatpopup.js';
@@ -11,6 +11,7 @@ const PostDetails = () => {
   const cleanImageUrl = (url) => {
     return url.replace(/"/g, ''); // Remove %22 (")
   };
+    const [imageUrls, setImageUrls] = useState([]);
 
   const cleanedItemPictureUrl = cleanImageUrl(itempictureurl);
   const [showChatPopup, setShowChatPopup] = useState(false);
@@ -46,6 +47,22 @@ console.log('isSameUser:', isSameUser);
       console.error('Error deleting listing:', error);
     }
   };
+  
+    useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/listings/postimages/${listingid}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch images');
+        }
+        const data = await response.json();
+        setImageUrls(data);
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    };
+    fetchImages();
+  }, [listingid]);
   return (
   <>
     <AuthenticatedTemplate>
@@ -56,15 +73,18 @@ console.log('isSameUser:', isSameUser);
         <div className="post-details-content">
 		{isSameUser && (
             <p>
-              <button  className="customButton" onClick={() => handleDelete(listingid)}>Delete</button>
+              <button  className="customButton" onClick={() => handleDelete(listingid)}>Delete your post</button>
             </p>
           )}
           <p className='titleContainer'>listingName: {listingname}</p>
-          {itempictureurl && (
-            <div className="detailsPic">
-              <img src={cleanedItemPictureUrl} alt={listingname} />
-            </div>
-          )}
+          
+		  {imageUrls.length > 0 && (
+  <div className="detailsPic" style={{ display: 'flex' }}>
+    {imageUrls.map((imageUrl, index) => (
+      <img key={index} src={imageUrl} alt={`Image ${index + 1}`} style={{ marginRight: '10px' }} />
+    ))}
+  </div>
+)}
           <table className='TableProp'>
             <thead>
               <tr>
