@@ -1,34 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import ImageUploader from '../shared/ImageUploader/ImageUploader';
-
-import '../shared/ImageUploader/ImageUploader.css';
+import { Link } from 'react-router-dom';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './Home.css';
 
 const PostManagementView = () => {
-  const [selectedItem, setSelectedItem] = useState(null);
+const [selectedItem, setSelectedItem] = useState(null);
   const [submittedData, setSubmittedData] = useState({ title: '', description: '' });
   const [items, setItems] = useState([]);
+  const [showSortingOptions, setShowSortingOptions] = useState(false);
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/items');
-        if (!response.ok) {
-          throw new Error('Failed to fetch items');
-        }
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        console.error('Error fetching items:', error);
-        
-      }
-    };
-
-    fetchItems();
+    fetchListings('http://localhost:5000/api/listings'); // Default listing fetch
   }, []);
+
+const fetchListings = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error('Failed to fetch listings');
+    }
+    const data = await response.json();
+    setItems(data.map(item => ({
+      ...item,
+      itempictureurl: item.imageurls && item.imageurls.length > 0 ? item.imageurls[0] : null // Get the first image URL
+    })));
+  } catch (error) {
+    console.error('Error fetching listings:', error);
+  }
+};
 
   const handleSubmittedData = (data) => {
     setSubmittedData(data);
-    submittedData(setSubmittedData);
   };
 
   const openModal = (item) => {
@@ -43,94 +47,127 @@ const PostManagementView = () => {
     return url.replace(/"/g, ''); // Remove %22 (")
   };
 
- const fetchItems = async () => {
-    try {
-        const response = await fetch('http://localhost:5000/items');
-        if (!response.ok) {
-          throw new Error('Failed to fetch items');
-        }
-        const data = await response.json();
-        setItems(data);
-      } catch (error) {
-        console.error('Error fetching items:', error);
-        
-      }
-    };
+  const toggleSortingOptions = () => {
+    setShowSortingOptions(!showSortingOptions);
+  };
 
-const deleteItem = async (itemType) => {
+  // Function to handle sorting and fetching sorted listings
+const handleSort = async (sortType, sortBy) => {
+  const sortUrl = `http://localhost:5000/api/listings/sort/${sortBy}/${sortType}`;
   try {
-    // Fetch the item ID based on the item type
-    const response = await fetch(`http://localhost:5000/getItemId/${itemType}`);
+    const response = await fetch(sortUrl);
     if (!response.ok) {
-      throw new Error('Failed to fetch item ID');
+      throw new Error('Failed to fetch sorted listings');
     }
-    const { itemId } = await response.json();
-
-    // Make the delete request using the retrieved item ID
-    const deleteResponse = await fetch(`http://localhost:5000/deletePostById/${itemId}`, {
-      method: 'DELETE',
-    });
-    if (!deleteResponse.ok) {
-      throw new Error('Failed to delete item');
-    }
-
-    // Refetch the items to update the list
-    await fetchItems();
+    const data = await response.json();
+    console.log('Sorted data:', data); // Log the sorted data
+    setItems(data.map(item => ({
+      ...item,
+      itempictureurl: item.imageurls && item.imageurls.length > 0 ? item.imageurls[0] : null // Get the first image URL
+    })));
   } catch (error) {
-    console.error('Error deleting item:', error);
-    // Handle error
+    console.error('Error fetching sorted listings:', error);
   }
 };
+  const handleDelete = async (listingId) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/listings/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ listingid: listingId })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete listing');
+      }
+      // Refresh listings after deletion
+      fetchListings('http://localhost:5000/api/listings');
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
+  };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px', marginLeft: '300px' }}>
-      <h1 style={{ color: '#ff9b82', fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
-        Click an image for Delete Details
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <h1 className='gradientText' style={{ fontSize: '1.5rem', fontFamily: 'Impact, fantasy' }}>
+        Content moderation
+        <span onClick={toggleSortingOptions} style={{ cursor: 'pointer', marginLeft: '20px' }}>
+          Filter<FontAwesomeIcon icon={faFilter} />
+        </span>
       </h1>
 
-      {/* Display items fetched from the backend */}
-      <div >
-        <h2>Content Moderation</h2>
-        <div className="imageGrid" >
-          {items.map((item, index) => (
-            <div key={index} className="imageGriddy">
-             <div className="titleContainer">
-          <h3>Title: {item.itemtype}</h3>
+      {showSortingOptions && (
+        <div style={{ marginTop: '2%' }}>
+          <button className="customButton" onClick={() => handleSort('asc', 'dateposted')}>
+  Sort by Date Posted (Asc)
+</button>
+
+<button className="customButton" onClick={() => handleSort('desc', 'dateposted')}>
+  Sort by Date Posted (Desc)
+</button>
+<button className="customButton" onClick={() => handleSort('asc', 'zipcode')}>
+  Sort by Zipcode (Asc)
+</button>
+
+<button className="customButton" onClick={() => handleSort('desc', 'zipcode')}>
+  Sort by Zipcode (Desc)
+</button>
+<button className="customButton" onClick={() => handleSort('asc', 'itemcategory')}>
+  Sort by itemcategory (asc)
+</button>
+<button className="customButton" onClick={() => handleSort('desc', 'itemcategory')}>
+  Sort by itemcategory (Desc)
+</button>
+		  
         </div>
-              
-              {/* Clean the image URLs and map them to img elements */}
-              {item.itempictureurl.split(',').map((url, idx) => (
-                <div key={idx} className="imageItem" onClick={() => openModal(item)}>
-                  <img
-                    src={cleanImageUrl(url.trim())}
-                    alt={item.itemtype}
-                  />
-                 
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+      )}
+
+      <div className="imageGrid" style={{ marginTop: '2%' }}>
+        {items.map((item, index) => (
+          <div key={index} style={{ outline: '1px inset black' }}>
+            <h3 className="titleContainer">{item.listingname}</h3>
+			<button  className="customButton" onClick={() => handleDelete(item.listingid)}>Delete</button>
+            {item.itempictureurl && (
+              <div className="imageItem" onClick={() => openModal(item)}>
+                <Link
+                  to={{
+                    pathname: `/home/${item.listingname}/${item.listingid}/${item.username}/${item.zipcode}/${item.description}/${encodeURIComponent(item.itempictureurl)}`,
+                    state: {
+                      listingname: item.listingname,
+                      listingid: item.listingid,
+                      username: item.username,
+                      zipcode: item.zipcode,
+                      description: item.description,
+                      itempictureurl: item.itempictureurl
+                    }
+                  }}
+                >
+                  <img src={cleanImageUrl(item.itempictureurl.trim())} alt={item.listingname} />
+                </Link>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
 
       <div style={{ marginTop: '20px' }}>
         <ImageUploader showDropzone={false} showImages={false} onTextSubmit={handleSubmittedData} />
       </div>
 
-      {/* Modal */}
       {selectedItem && (
         <div className="modal" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <span className="close" onClick={closeModal}>&times;</span>
-            <h2>Title: {selectedItem.itemtype}</h2>
+            <h2 className="PopUpTitle">Title: {selectedItem.listingname}</h2>
             <p>Description: {selectedItem.description}</p>
             <p>Zipcode: {selectedItem.zipcode}</p>
-			<button onClick={() => deleteItem(selectedItem.itemtype)}>Delete</button>
           </div>
         </div>
       )}
     </div>
   );
 };
+
 
 export default PostManagementView;

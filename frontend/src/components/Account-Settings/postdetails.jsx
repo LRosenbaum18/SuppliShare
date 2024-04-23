@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { AuthenticatedTemplate, UnauthenticatedTemplate  } from "@azure/msal-react";
+import { useParams, useNavigate } from 'react-router-dom';
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal, useAccount  } from "@azure/msal-react";
 import ChatPopup from './chatpopup.js';
+import './Home.css';
 
 const PostDetails = () => {
   const { listingname, listingid, username, zipcode, description, itempictureurl } = useParams();
   console.log('Individual parameters:', listingname, listingid, zipcode, description, itempictureurl);
-
+  const navigate = useNavigate();
   const cleanImageUrl = (url) => {
     return url.replace(/"/g, ''); // Remove %22 (")
   };
@@ -17,13 +18,47 @@ const PostDetails = () => {
   const toggleChatPopup = () => {
     setShowChatPopup(!showChatPopup);
   };
+  
+  const { accounts } = useMsal(); // Get MSAL accounts
+  const account = useAccount(accounts[0] || {}); // Get the first account
+  const msalUserName = account?.username || ""; // Get the MSAL username
 
+  // Check if the MSAL username matches the username from useParams
+  const isSameUser = msalUserName === username;
+  console.log('MSAL Username:', msalUserName);
+console.log('Username from useParams:', username);
+console.log('isSameUser:', isSameUser);
+  const handleDelete = async (listingId) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/listings/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ listingid: listingId })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete listing');
+      }
+      // Navigate to home page after deletion
+      navigate("/");
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+    }
+  };
   return (
   <>
     <AuthenticatedTemplate>
+	
       <div className="post-details-container">
+	  
         <div className="Box"></div>
         <div className="post-details-content">
+		{isSameUser && (
+            <p>
+              <button  className="customButton" onClick={() => handleDelete(listingid)}>Delete</button>
+            </p>
+          )}
           <p className='titleContainer'>listingName: {listingname}</p>
           {itempictureurl && (
             <div className="detailsPic">
