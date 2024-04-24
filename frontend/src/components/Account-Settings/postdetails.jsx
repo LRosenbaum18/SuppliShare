@@ -81,7 +81,7 @@ console.log('isSameUser:', isSameUser);
 		  {imageUrls.length > 0 && (
   <div className="detailsPic" style={{ display: 'flex' }}>
     {imageUrls.map((imageUrl, index) => (
-      <img key={index} src={imageUrl} alt={`Image ${index + 1}`} style={{ marginRight: '10px' }} />
+      <img key={index} src={imageUrl} alt="Not found" style={{ marginRight: '10px' }} />
     ))}
   </div>
 )}

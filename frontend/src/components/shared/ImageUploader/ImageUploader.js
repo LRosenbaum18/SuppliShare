@@ -302,6 +302,7 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
   const [description, setDescription] = useState('');
   const [zip, setZip] = useState('');
   const [itemcategory, setItemcategory] = useState('');
+  // eslint-disable-next-line no-unused-vars
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const [filesToUpload, setFilesToUpload] = useState([]); // Files to upload
