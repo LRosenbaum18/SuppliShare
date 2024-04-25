@@ -78,6 +78,7 @@ export const Header = () => {
   const RenderLoginOrProfile = () => {
     return isLoggedIn ? (
       <div className="user-profile" onClick={toggleDropdown}>
+	  
         <img src={userProfile.profilepic} alt="Profile" />
         {showDropdown && (
           <div className="profile-dropdown" ref={dropdownRef}>
@@ -91,7 +92,10 @@ export const Header = () => {
                 <div onClick={() => navigateTo("/FlagsRaised")}>Flags Raised</div>
               </>
             )}
+			<div onClick={() => navigateTo("/")}>Home</div>
             <div onClick={() => navigateTo("/itemUpload")}>Post Item</div>
+			<div onClick={() => navigateTo("/PostManagement")}>Post Management</div>
+			
             <div onClick={handleLogout}>Logout</div>
           </div>
         )}

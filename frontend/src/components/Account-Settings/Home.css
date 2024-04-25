@@ -1,13 +1,18 @@
 .customButton {
-  padding: 10px 20px;
+  padding: 5px 10px; /* Reduce padding */
   background-color: #f89033;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px; /* Reduce border radius */
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px; /* Reduce font size */
   font-weight: bold;
   text-transform: uppercase;
-  box-shadow: 0 0px 5px black;
+  box-shadow: 0 0px 3px black; /* Reduce box shadow */
   transition: all 0.3s ease;
+  
+}
+.customButton:hover {
+  transform: scale(1.05); /* Scale the button on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Increase box shadow on hover */
 }

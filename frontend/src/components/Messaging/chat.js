@@ -1,50 +1,51 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMsal, useAccount } from '@azure/msal-react';
 
-const Chat = () => {
+const Chat = ({recipient}) => {
     const [messages, setMessages] = useState([]);
-    const [recipient, setRecipient] = useState('');
+    
     const ws = useRef(null);
     const messageInputRef = useRef(null);
     const { accounts } = useMsal();
     const account = useAccount(accounts[0] || {});
 
-    useEffect(() => {
-        if (!account) {
-            console.log('User is not authenticated');
-            return;
+useEffect(() => {
+    if (!account) {
+        console.log('User is not authenticated');
+        return;
+    }
+
+    const userId = account.username;
+    const connectWebSocket = async () => {
+        const response = await fetch(`https://supplishare.azurewebsites.net/api/negotiate?user=${userId}`, {
+            credentials: 'include',
+        });
+        const { url } = await response.json();
+
+        ws.current = new WebSocket(url);
+        ws.current.onopen = () => console.log('WebSocket connected');
+        ws.current.onmessage = (event) => {
+            const eventData = JSON.parse(event.data);
+            // Add received messages to state, tagging them as 'received'
+            setMessages((prevMessages) => [...prevMessages, { ...eventData, type: 'received' }]);
+        };
+        ws.current.onclose = () => console.log('WebSocket disconnected');
+        ws.current.onerror = (error) => console.error('WebSocket error:', error);
+    };
+
+    connectWebSocket();
+
+    return () => {
+        if (ws.current) {
+            ws.current.close();
         }
+    };
+}, [account]); // Include 'account' in the dependency array
 
-        const userId = account.username;
-        const connectWebSocket = async () => {
-            const response = await fetch(`https://supplishare.azurewebsites.net/api/negotiate?user=${userId}`, {
-                credentials: 'include',
-            });
-            const { url } = await response.json();
-
-            ws.current = new WebSocket(url);
-            ws.current.onopen = () => console.log('WebSocket connected');
-            ws.current.onmessage = (event) => {
-                const eventData = JSON.parse(event.data);
-                // Add received messages to state, tagging them as 'received'
-                setMessages((prevMessages) => [...prevMessages, { ...eventData, type: 'received' }]);
-            };
-            ws.current.onclose = () => console.log('WebSocket disconnected');
-            ws.current.onerror = (error) => console.error('WebSocket error:', error);
-        };
-
-        connectWebSocket();
-
-        return () => {
-            if (ws.current) {
-                ws.current.close();
-            }
-        };
-    }, [account]);
 
     const handleSendMessage = () => {
         const messageText = messageInputRef.current.value.trim();
-        if (ws.current && messageText !== '') {
+        if (ws.current && messageText !== '' && recipient!=='') {
             const message = {
                 recipientUserId: recipient,
                 message: messageText
@@ -59,27 +60,24 @@ const Chat = () => {
 
     return (
         <div>
-            <h1>Chat with User: </h1>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Recipient User ID (leave blank for broadcast)"
-                    value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
-                />
-            </div>
-            <div>
+            <h1>Chat with Donor: </h1>
+            
+           <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                     ref={messageInputRef}
                     type="text"
                     placeholder="Type your message..."
                     onKeyPress={(e) => e.charCode === 13 && handleSendMessage()} // Send on Enter
                 />
-                <button onClick={handleSendMessage}>Send</button>
+                <button style={{ marginRight: '50px' }} onClick={handleSendMessage}>Send</button>
             </div>
             <div id="messages">
                 {messages.map((msg, index) => (
-                    <p key={index} className={msg.type === 'received' ? "received" : "sent"}>
+                    <p key={index} style={{
+    wordWrap: 'break-word',
+    overflowWrap: 'break-word',
+	 padding: '15px'
+  }} className={msg.type === 'received' ? "received" : "sent"}>
                         {msg.recipientUserId ? `[DM to ${msg.recipientUserId}] ` : ""}
                         {msg.message}
                     </p>

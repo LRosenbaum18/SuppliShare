@@ -1,16 +1,16 @@
 .imageGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 55px;
-  outline: 10px;
-  outline-style: inset;
-  outline-color: orange;
+  /* Adjust minmax values */
+  
   margin: auto;
+  position: relative;
+  
+  /* Add position relative to the grid container */
 
 }
 
 .imageGriddy {
-
   outline: 10px;
   outline-style: inset;
   outline-color: orange;
@@ -23,13 +23,34 @@
 }
 
 .titleContainer {
-  width: auto;
-  /* Occupy full width */
-  margin: auto;
-  padding: auto;
-  color: #f89033;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  position: relative;
+  	 background: linear-gradient(to bottom, #f9c051 50%, #f89033 50%); /* Define gradient colors */
+  -webkit-background-clip: text; /* Apply background to text */
+  background-clip: text; /* Apply background to text */
+  color: transparent; /* Set text color to transparent */
+  -webkit-text-stroke: 0.5px black; /* Add black outline around the text */
+margin: auto;
 
 
+
+}
+.titleContainerright{
+	
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  position: relative;
+  	 background: linear-gradient(to bottom, #f9c051 50%, #f89033 50%); /* Define gradient colors */
+  -webkit-background-clip: text; /* Apply background to text */
+  background-clip: text; /* Apply background to text */
+  color: transparent; /* Set text color to transparent */
+  -webkit-text-stroke: 0.5px black; /* Add black outline around the text */
+margin-right: auto;
+
+
+
+}
+.titleContainer h2, h3{
 
 }
 
@@ -56,9 +77,11 @@
 
 .imageItem img {
   width: 100%;
-  height: 100%;
+  height: 99%;
   object-fit: fit;
   margin: auto;
+  
+  
 
 
 }
@@ -69,12 +92,11 @@
   text-align: center;
   cursor: pointer;
   background-color: grey;
-  height: 25%;
   width: 25%;
-  display: flex;
+  height: 50%;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  position: absolute;
+
 }
 
 
@@ -83,7 +105,11 @@
   color: #fff;
   width: 75%;
   height: 75%;
+  margin-bottom: 50px;
+  margin-left: 45px;
+
 }
+
 
 .modal {
   display: block;
@@ -150,7 +176,7 @@
 }
 
 .Box {
-  background-color: red;
+  background-color: #f9c454;
   display: flex;
   width: 800px;
   height: 250px;
@@ -164,6 +190,8 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
+  margin: auto;
+  padding-top: 2%;
   /* Adjust the height as needed */
 }
 
@@ -235,4 +263,94 @@ table {
   margin: auto;
 
 
+}
+.gradientText {
+  	 background: linear-gradient(to bottom, #f9c051 50%, #f89033 50%); /* Define gradient colors */
+  -webkit-background-clip: text; /* Apply background to text */
+  background-clip: text; /* Apply background to text */
+  color: transparent; /* Set text color to transparent */
+  -webkit-text-stroke: 0.5px black; /* Add black outline around the text */
+
+
+}
+.InfoForm {
+  position: relative;
+  overflow: visible;
+  /* margin-bottom: ; */
+  left: 500px;
+  top: 10px;
+  display: grid;
+  padding-left: 10%;
+  translate: 0px -375px;
+}
+
+.ItemNameField {
+  /* margin-bottom: 10px; */
+  display: grid;
+}
+
+.DescrField {
+  margin-bottom: 10px;
+  width: 400px;
+  resize: none;
+  margin-right: 50px;
+  display: grid;
+  
+
+}
+
+.ZipField {
+  /* margin-bottom: 20px; */
+  display: grid;
+  margin-bottom: 10px;
+  
+}
+
+
+.container {
+  pointer-events: none;
+  display: grid;
+}
+
+.container .dropzone {
+  pointer-events: all;
+  display: grid;
+}
+
+.DescLabel {
+  padding-top: 30px;
+  
+  
+}
+
+.DescLabel {
+  padding-top: 30px;
+  
+}
+
+.CatLabel{
+  margin-top: 50px;
+}
+/* Apply a fixed width to all input fields */
+.InfoForm input[type=text],
+.InfoForm select {
+  width: 400px; /* Adjust the width as needed */
+}
+
+/* Apply the same fixed width to the description field */
+.InfoForm .DescrField {
+  width: 400px; /* Adjust the width as needed */
+}
+
+/* Remove width styling from ZipField */
+.InfoForm .ZipField input[type=text] {
+  width: auto; /* Let the width adjust based on content */
+}
+
+.previewImages{
+  position: absolute;
+  
+  top: 75%;
+  left: 0;
+  right: 0;
 }
