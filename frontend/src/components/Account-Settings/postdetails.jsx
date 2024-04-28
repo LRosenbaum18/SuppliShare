@@ -105,10 +105,7 @@ console.log('isSameUser:', isSameUser);
                 <td className="titleContainer">Listing ID: </td>
                 <td className="titleContainerright">{listingid}</td>
               </tr>
-              <tr>
-                <td className="titleContainer">Username: </td>
-                <td className="titleContainerright">{username}</td>
-              </tr>
+              
             </tbody>
           </table>
           <p>
@@ -156,10 +153,7 @@ console.log('isSameUser:', isSameUser);
                 <td>Listing ID: </td>
                 <td>{listingid}</td>
               </tr>
-              <tr>
-                <td>Username: </td>
-                <td>{username}</td>
-              </tr>
+              
             </tbody>
           </table>
         </div>

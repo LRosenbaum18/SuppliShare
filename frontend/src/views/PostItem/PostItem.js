@@ -7,10 +7,10 @@ function PostItem() {
   return (
     <div>
       <div>
-        <NavBar />
+        <NavBar /> {/*nav component */} 
       </div>
       <div>
-        <ItemUpload />
+        <ItemUpload /> {/* item upload component*/}
       </div>
     </div>
   );

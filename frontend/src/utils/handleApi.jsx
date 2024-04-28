@@ -23,7 +23,9 @@ function handleApi() {
   }, []);
 //returning daata retrieved from API CALL
   return (
+  {/* return statement */}
     <div>
+	{/*data from azure including a map of the item, index */}
       <h1>Data from Azure API:</h1>
       <ul>
         {data.map((item, index) => (

@@ -5,6 +5,7 @@ import '../../styles/Home.css';
 function Home() {
     return (
         <div>
+		{/* home view with nav component */} 
             <NavBar />
         </div>
     );
