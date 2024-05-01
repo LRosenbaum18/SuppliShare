@@ -85,16 +85,15 @@ export const Header = () => {
             <div onClick={handleSettingsClick}>Profile</div>
             {userProfile.role === "Admin" && (
               <>
-                <div onClick={() => navigateTo("/Dashboard")}>Dashboard</div>
+                
                 <div onClick={() => navigateTo("/UserManagement")}>User Management</div>
-                <div onClick={() => navigateTo("/PostManagement")}>Post Management</div>
-                <div onClick={() => navigateTo("/ReportAndAnalytics")}>Report And Analytics</div>
-                <div onClick={() => navigateTo("/FlagsRaised")}>Flags Raised</div>
+                
+                
               </>
             )}
 			<div onClick={() => navigateTo("/")}>Home</div>
             <div onClick={() => navigateTo("/itemUpload")}>Post Item</div>
-			<div onClick={() => navigateTo("/PostManagement")}>Post Management</div>
+			
 			
             <div onClick={handleLogout}>Logout</div>
           </div>

@@ -1,33 +1,35 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useMsal, useAccount } from '@azure/msal-react';
+import { useNavigate } from 'react-router-dom';
 import './ImageUploader.css';
-{/*imports */}
+//*imports */}
 const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [zip, setZip] = useState('');
   const [itemcategory, setItemcategory] = useState('');
-  {/*disable apparent unused since the database is still getting sent this information */}
+  /*disable apparent unused since the database is still getting sent this information */
   // eslint-disable-next-line no-unused-vars
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const [filesToUpload, setFilesToUpload] = useState([]); // Files to upload
   const { accounts } = useMsal(); // Get MSAL accounts
   const account = useAccount(accounts[0] || {}); // Get the first account
-{/*uploadedimages, title, description,zip,itemcategory,loading,files to uploading, use msal and use account handle drop with accepted files, set files to uploaded to accepted files */}
+  const navigate = useNavigate();
+//uploadedimages, title, description,zip,itemcategory,loading,files to uploading, use msal and use account handle drop with accepted files, set files to uploaded to accepted files 
   const handleDrop = useCallback((acceptedFiles) => {
     setFilesToUpload(acceptedFiles);
 	console.log('Files to upload:', acceptedFiles);
   }, []);
-{/*handle submit stops the information from automatically being submitted */}
+//handle submit stops the information from automatically being submitted 
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent default form submission
 
     try {
       setLoading(true); // Set loading state to true
-      {/*append form data with title, desc, zip, itemcategory, email, append each image url, */}
+      //*append form data with title, desc, zip, itemcategory, email, append each image url,
       const formData = new FormData();
       formData.append('title', title);
       formData.append('description', description);
@@ -39,28 +41,28 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
         formData.append('image', file);
 		
       });
-      {/*await fetch with uploadimage sent as a post req*/}
+      //*await fetch with uploadimage sent as a post req*/
       const response = await fetch('http://localhost:5000/uploadimage', {
         method: 'POST',
         body: formData,
       });
 
       if (!response.ok) {
-		  {/*if response is not okay log the error. */}
+		  ///*if response is not okay log the error. */}
         console.error('Failed to upload images. Status:', response.status);
         console.error('Response:', await response.text());
         throw new Error(`Failed to upload images. Status: ${response.status}`);
       }
 
       const data = await response.json();
-	  {/*response from the server */}
+	  ///*response from the server */}
       console.log('Response from server:', data);
-       {/*text submission/form box handling of title, description, url, zip, itemcategory */}
+       //*text submission/form box handling of title, description, url, zip, itemcategory */}
       if (data && data.uploadedData && data.uploadedData.urls) {
         if (onTextSubmit) {
           onTextSubmit(title, description, data.uploadedData.urls, zip, itemcategory);
         }
-        {/*set prev images */}
+        //*set prev images */}
         setUploadedImages((prevImages) => [
           ...prevImages,
           {
@@ -68,22 +70,23 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
             dataURL: data.uploadedData.urls[0],
           },
         ]);
-        {/*handlee on upload */}
+        //*handlee on upload */}
         if (onUpload) {
           onUpload(uploadedImages);
         }
-        {/*log title, desc, zip, itemcategory, urls, and account name, and data */}
+        //*log title, desc, zip, itemcategory, urls, and account name, and data */}
         console.log('Title:', title);
         console.log('Description:', description);
         console.log('zipcode:', zip);
         console.log('itemcategory:', itemcategory);
         console.log('Image URL:', data.uploadedData.urls[0]);
         console.log('email', account.username);
+		navigate("/");
       } else {
         console.error('Invalid response from server:', data);
       }
     } catch (error) {
-		{/*log error  and set loading */}
+		//*log error  and set loading */}
       console.error('Error:', error);
     } finally {
       setLoading(false); // Reset loading state
@@ -100,7 +103,7 @@ const ImageUploader = ({ onUpload, showDropzone, showImages, onTextSubmit }) => 
       console.log('Default email set to "guest"');
     }
   }, [account]);
-  {/*restrict dropzone on drop, accept only jpeg images with a max of 5 files, with a max size of 10mb */}
+  //*restrict dropzone on drop, accept only jpeg images with a max of 5 files, with a max size of 10mb */}
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: handleDrop,
     accept: 'image/jpeg',
