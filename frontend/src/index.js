@@ -7,6 +7,7 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
+  {/* react strict mode with a call to the app component, used for single application pages */}
       <App />
   </React.StrictMode>
 );
