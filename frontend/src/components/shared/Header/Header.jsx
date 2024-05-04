@@ -5,7 +5,7 @@ import logo from "../../../assets/images/brand-logo.png";
 import profile from "../../../assets/images/profilepic/profile-pic.jpg";
 import { SearchBar } from "../SearchBar/SearchBar";
 import { useMsal } from "@azure/msal-react";
-import "./navbar.css";
+
 
 export const Header = () => {
   const navigate = useNavigate();
