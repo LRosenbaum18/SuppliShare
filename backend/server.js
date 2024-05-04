@@ -89,7 +89,7 @@ app.post('/uploadimage', upload.array('image'), async (req, res) => {
     res.status(500).send('Error during file upload.');
   }
 });
-
+//insert listing details, by email, listingname, desc, zip,imageurl, item category
 async function insertListingDetails(email, listingname, description, zipcode, imageUrls, itemcategory) {
   const client = await pool.connect();
 
@@ -156,7 +156,7 @@ async function insertListingDetails(email, listingname, description, zipcode, im
   }
 }
 
-
+//insert image details, old DB schema, 
 
 async function insertImageDetails(itemType, description, zipcode, blobUrl, itemcategory) {
   const client = await pool.connect();
@@ -196,6 +196,7 @@ async function insertImageDetails(itemType, description, zipcode, blobUrl, itemc
     client.release();
   }
 }
+//get listings  calls fetchlistings with details,
 app.get('/api/listings', async (req, res) => {
   try {
     const listings = await fetchListingsWithDetails();
@@ -204,7 +205,7 @@ app.get('/api/listings', async (req, res) => {
     res.status(500).send('Error fetching listings from the database.');
   }
 });
-
+//get listingid, listname, description, zipcode, itemcategory
 async function fetchListingsWithDetails() {
   const client = await pool.connect();
 
@@ -243,7 +244,7 @@ async function fetchListingsWithDetails() {
     client.release();
   }
 }
-
+//get listing id
 app.get('/api/listings/postimages/:listingid', async (req, res) => {
   const listingId = req.params.listingid;
 
@@ -270,7 +271,7 @@ app.get('/api/listings/postimages/:listingid', async (req, res) => {
 
 
 
-// Endpoint to get a list of items
+// Endpoint to get a list of items old schema
 app.get('/items', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -285,6 +286,7 @@ app.get('/items', async (req, res) => {
     res.status(500).send('Error retrieving items from the database');
   }
 });
+//getting the user id through the listing id
 app.get('/listing/:listingID/userID', async (req, res) => {
   try {
     const { listingID } = req.params;
@@ -304,7 +306,7 @@ app.get('/listing/:listingID/userID', async (req, res) => {
     res.status(500).send('Error retrieving userID for the listing');
   }
 });
-// Endpoint to get items listed by a specific user
+// Endpoint to get items listed by a specific user --not used
 app.get('/user-items/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -318,7 +320,7 @@ app.get('/user-items/:userId', async (req, res) => {
     res.status(500).send('Error retrieving items for the user');
   }
 });
-
+//get items, / images using new schema, 
 app.get('/items/images', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -347,7 +349,7 @@ app.get('/items/images', async (req, res) => {
     res.status(500).send('Failed to retrieve image URLs and listing IDs');
   }
 });
-
+//user-count, old schema
 app.get('/api/admin/user-count', async (req, res) => {
   try {
     const queryResult = await pool.query('SELECT COUNT(*) FROM Users');
@@ -358,7 +360,7 @@ app.get('/api/admin/user-count', async (req, res) => {
     res.status(500).send('Failed to retrieve user count');
   }
 });
-
+//delete post by title old schema
 async function deletePost(itemType) {
   try {
     const query = {
@@ -371,7 +373,7 @@ async function deletePost(itemType) {
     throw new Error('Error deleting post: ' + error.message);
   }
 }
-
+//delete post item type, new schema
 app.delete('/deletePost/:itemType', async (req, res) => {
   const { itemType } = req.params; // Extract the itemType from the request parameters
   try {
@@ -386,6 +388,7 @@ app.delete('/deletePost/:itemType', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete post' });
   }
 });
+//delete post by item id old schema
 app.delete('/deletePostById/:itemid', async (req, res) => {
   const { itemid } = req.params; // Extract the itemId from the request parameters
   try {
@@ -400,7 +403,7 @@ app.delete('/deletePostById/:itemid', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete post' });
   }
 });
-
+//function to delete post by id old
 async function deletePostById(itemId) {
   try {
     console.log('Received itemId:', itemId);
@@ -426,7 +429,7 @@ async function deletePostById(itemId) {
 }
 
 
-
+//get item id from item type old schema
 app.get('/getItemId/:itemType', async (req, res) => {
   const { itemType } = req.params; // Extract the itemType from the request parameters
   try {
@@ -450,7 +453,7 @@ app.get('/getItemId/:itemType', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve item ID' });
   }
 });
-
+//image count old schema
 app.get('/imageCount', async (req, res) => {
   try {
     // Query to count the number of images in the ItemPictureURL column
@@ -472,7 +475,7 @@ app.get('/imageCount', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve image count' });
   }
 });
-
+//get all user data. not in use,
 app.get('/api/admin/userData', async (req, res) => {
   try {
     const queryResult = await pool.query('SELECT * FROM Users');
@@ -515,7 +518,7 @@ app.get('/items/sort/zipcode/descending', async (req, res) => {
     res.status(500).send('Error retrieving sorted items from the database');
   }
 });
-
+// End Point to get a list of items sorted by dateposted in ascending order
 app.get('/api/listings/sort/dateposted/asc', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -583,7 +586,7 @@ app.get('/api/listings/sort/dateposted/desc', async (req, res) => {
   }
 });
 
-
+//delete with listing id, new schema
 app.delete('/api/listings/delete', async (req, res) => {
   try {
     const { listingid } = req.body; // Assuming listingid is sent in the request body
@@ -612,6 +615,7 @@ app.delete('/api/listings/delete', async (req, res) => {
     res.status(500).send('Error deleting items from the database');
   }
 });
+// zip asc
 app.get('/api/listings/sort/zipcode/asc', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -644,7 +648,7 @@ app.get('/api/listings/sort/zipcode/asc', async (req, res) => {
     res.status(500).send('Error retrieving sorted items from the database');
   }
 });
-
+//zip desc
 app.get('/api/listings/sort/zipcode/desc', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -678,7 +682,7 @@ app.get('/api/listings/sort/zipcode/desc', async (req, res) => {
   }
 });
 
-
+//itemcategory asc
 app.get('/api/listings/sort/itemcategory/asc', async (req, res) => {
   try {
     const client = await pool.connect();
@@ -711,7 +715,7 @@ app.get('/api/listings/sort/itemcategory/asc', async (req, res) => {
     res.status(500).send('Error retrieving sorted items from the database');
   }
 });
-
+//itemcategory desc
 app.get('/api/listings/sort/itemcategory/desc', async (req, res) => {
   try {
     const client = await pool.connect();
