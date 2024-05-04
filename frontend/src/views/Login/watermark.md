@@ -1,0 +1,1 @@
+the watermark component is the watermark used on the page, the image is in the assests of the program,

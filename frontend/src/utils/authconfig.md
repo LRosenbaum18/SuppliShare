@@ -1,0 +1,1 @@
+contained within this folder is the auth configuration
