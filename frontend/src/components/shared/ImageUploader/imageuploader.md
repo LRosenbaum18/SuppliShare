@@ -1,0 +1,1 @@
+contained is the styling for the images, it is shown in a grid like format, some of the home aspects are here too because image uploader shows the images uploaded, form fields are also styled here
